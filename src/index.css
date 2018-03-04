@@ -1,0 +1,174 @@
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('./fonts/Gilroy-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Gilroy';
+  src: url('./fonts/Gilroy-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Gilroy';
+  src: url('./fonts/Gilroy-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Gilroy';
+  src: url('./fonts/Gilroy-Heavy.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Gilroy';
+  src: url('./fonts/Gilroy-Thin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Gilroy';
+  src: url('./fonts/Gilroy-SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Gilroy';
+  src: url('./fonts/Gilroy-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Gilroy, sans-serif;
+    background-color: #2847b5;
+    color: white;
+}
+
+body .mui-textfield {
+    padding-top: 22px;
+}
+
+body .mui-textfield > label {
+    font-size: 14px;
+}
+
+body .mui-textfield > input ~ label,
+body .mui-textfield > textarea ~ label {
+    color: white;
+}
+
+body .mui-textfield > input:focus ~ label,
+body .mui-textfield > textarea:focus ~ label {
+    color: white;
+}
+
+body .mui-textfield > input:focus,
+body .mui-textfield > textarea:focus {
+    border-width: 0;
+}
+
+body .mui-textfield > input,
+body .mui-textfield > textarea {
+    border-width: 0;
+    background-color: white;
+    border-radius: 3px;
+    padding: 0 8px;
+}
+
+
+body .mui-select {
+    padding-top: 22px;
+}
+
+body .mui-select > select {
+    background-color: white;
+    padding: 0 25px 0 15px;
+    border-radius: 3px;
+    background-position: 95% center;
+    border-bottom: none;
+}
+
+body .mui-select > label {
+    font-size: 14px;
+    color: white;
+}
+
+body .mui-select__menu {
+    background-color: #869ff7;
+}
+
+body .mui-select__menu > div.mui--is-selected {
+    background-color: #adbfff;
+}
+
+body .mui-select:focus > label,
+body .mui-select > select:focus ~ label {
+    color: white;
+}
+
+
+.spacer {
+    flex-grow: 1;
+}
+
+
+.slider input {
+    -webkit-appearance: none;
+    width: 300px;
+    height: 15px;
+    border-radius: 5px;
+    background: #b6b9bf;
+    outline: none;
+    -webkit-transition: background-color .15s ease-in-out;
+    transition: background-color .15s ease-in-out;
+}
+
+.slider input:hover {
+    background: #d3d3d3;
+}
+
+.slider input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    /*background: #4CAF50;*/
+    background-color: #4ebd94;
+    cursor: pointer;
+    border-radius: 50%;
+    -webkit-transition: background-color .15s ease-in-out;
+    transition: background-color .15s ease-in-out;
+    box-shadow: 0 0px 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+.slider input:hover::-webkit-slider-thumb {
+    background-color: #46daa3;
+}
+
+.slider input::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    /*background: #4CAF50;*/
+    background-color: #4ebd94;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.slider label {
+    color: white;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 15px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+
+
+
+

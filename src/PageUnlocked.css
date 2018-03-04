@@ -1,0 +1,95 @@
+
+
+.PageUnlocked nav {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 220px;
+    height: 100%;
+    background-color: #355ff1;
+}
+
+.PageUnlocked nav section {
+    width: calc(100% - 40px);
+    background-color: #869ff7;
+    padding: 20px;
+    margin-bottom: 1px;
+}
+
+.PageUnlocked nav section.logo-wrapper {
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #1b3079;
+}
+
+.PageUnlocked nav section.logo-wrapper .logo {
+    width: 180px;
+}
+
+.PageUnlocked nav section label {
+    font-weight: bold;
+}
+
+.PageUnlocked nav section .large {
+    font-size: 3rem;
+    font-weight: 200;
+}
+
+.PageUnlocked nav section.balances label {
+    margin-bottom: 10px;
+    display: block;
+}
+
+.PageUnlocked nav section.sig-price .change {
+    font-weight: bold;
+}
+
+.PageUnlocked nav section.sig-price .change.positive {
+    color: #098e0e;
+}
+
+.PageUnlocked nav section.sig-price .change.negative {
+    color: #8a2d2d;
+}
+
+.PageUnlocked nav section.menu-item {
+    cursor: pointer;
+}
+
+.PageUnlocked nav section.menu-item.active {
+    background-color: #2847b5;
+}
+
+.PageUnlocked nav section.menu-item .icon {
+    width: 20px;
+    margin-right: 10px;
+    position: relative;
+    top: 4px;
+}
+
+
+
+.PageUnlocked .content-area {
+    position: fixed;
+    left: 220px;
+    padding: 10px 60px;
+    width: calc(100% - 220px - 120px);
+}
+
+.PageUnlocked .content-area .address {
+    text-align: right;
+    width: 100%;
+    color: #4ebd94;
+}
+
+.PageUnlocked .content-area .address h1 {
+    color: white;
+}
+
+
+
+
+

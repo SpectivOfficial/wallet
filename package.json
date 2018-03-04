@@ -1,0 +1,61 @@
+{
+  "name": "sig-wallet",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Spectiv",
+  "description": "SIG wallet",
+  "homepage": ".",
+  "devDependencies": {
+    "electron": "^1.7.9",
+    "electron-builder": "^13.6.0",
+    "foreman": "^2.0.0",
+    "react-scripts": "0.9.0"
+  },
+  "dependencies": {
+    "asar": "^0.14.2",
+    "classnames": "^2.2.5",
+    "ethers": "^2.2.6",
+    "lodash": "^4.17.5",
+    "moment": "^2.21.0",
+    "muicss": "^0.9.36",
+    "react": "^16.1.1",
+    "react-dom": "^16.1.1"
+  },
+  "main": "src/electron-starter.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "dev": "nf start -p 3000",
+    "pack": "build --dir",
+    "dist": "npm run build && build",
+    "postinstall": "install-app-deps"
+  },
+  "build": {
+    "asar": true,
+    "directories": {
+      "buildResources": "resources",
+      "output": "dist"
+    },
+    "appId": "com.spectiv.sigwallet",
+    "productName": "SIG Wallet",
+    "files": [
+      "src/electron-starter.js",
+      "node_modules",
+      "package.json",
+      "build",
+      "build/**/*"
+    ],
+    "mac": {
+      "category": "financial"
+    },
+    "linux": {
+      "target": [
+        "deb"
+      ]
+    },
+    "win": {}
+  }
+}

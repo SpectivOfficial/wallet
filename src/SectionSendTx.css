@@ -1,0 +1,59 @@
+.SectionSendTx .row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.SectionSendTx .amount .input {
+    flex-grow: 1;
+}
+
+.SectionSendTx .amount .currency {
+    width: 220px;
+    margin-left: 30px;
+}
+
+.SectionSendTx .gas-price .gwei {
+    margin-left: 10px;
+}
+
+
+.SectionSendTx .recent-txs {
+    flex-direction: column;
+    margin-top: 30px;
+}
+
+.SectionSendTx .recent-txs .header {
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(105, 189, 158, 0.5);
+    color: #4ebd94;
+    font-weight: bold;
+    font-size: 1.7rem;
+}
+
+.SectionSendTx .subheading {
+    margin-bottom: 20px;
+}
+
+.SectionSendTx .button-send {
+    background-color: #4ebd94;
+    color: white;
+}
+
+.SectionSendTx .button-send:hover {
+    background-color: #46daa3;
+    color: white;
+}
+
+.SectionSendTx button.button-clear {
+    background-color: #275f4a;
+    color: white;
+}
+
+.SectionSendTx button.button-clear:hover {
+    background-color: #28805f;
+    color: white;
+}
+
+
+

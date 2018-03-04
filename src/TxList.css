@@ -1,0 +1,74 @@
+
+ul.tx-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul.tx-list li {
+    background-color: #869ff7;
+    border-radius: 3px;
+    padding: 12px;
+    margin: 15px 0;
+    transition: height 0.3s, background-color 0.3s;
+    height: 20px;
+    overflow-y: hidden;
+}
+
+ul.tx-list li .summary .status {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+ul.tx-list li .summary .failed {
+    color: #8a2d2d;
+}
+
+ul.tx-list li .full {
+    display: none;
+}
+
+ul.tx-list li.expanded {
+    background-color: #355ff1;
+    height: 100px;
+}
+
+ul.tx-list li .summary {
+    display: flex;
+}
+
+ul.tx-list li .summary .expander {
+    margin-left: 15px;
+}
+
+ul.tx-list li.expanded .full {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    border-top: 1px solid;
+    padding-top: 14px;
+}
+
+ul.tx-list li .full .field > div {
+    text-overflow: ellipsis;
+    max-width: 200px;
+    overflow: hidden;
+}
+
+ul.tx-list li .full .field > a {
+    display: block;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+ul.tx-list li .full .field label {
+    display: block;
+    color: #cccccc;
+    font-weight: bold;
+}
+
+ul.tx-list li .full .field.tx-hash > a {
+
+}
