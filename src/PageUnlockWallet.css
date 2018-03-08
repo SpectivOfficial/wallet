@@ -1,10 +1,90 @@
 
 
 .PageUnlockWallet {
-    text-align: center;
+    /*text-align: center;*/
+}
+
+.PageUnlockWallet .logo-wrapper {
+    display: flex;
+    justify-content: center;
 }
 
 .PageUnlockWallet .logo-wrapper img {
     width: 150px;
+    height: 150px;
     margin-top: 110px;
 }
+
+.PageUnlockWallet h1 {
+    text-align: center;
+}
+
+.PageUnlockWallet .mui-tabs__bar {
+    text-align: center;
+}
+
+.PageUnlockWallet .mui-tabs__bar > li > a {
+    color: white;
+    cursor: pointer;
+}
+
+.PageUnlockWallet .mui-tabs__pane {
+    width: 500px;
+    padding-top: 30px;
+    margin: 0 auto;
+}
+
+.PageUnlockWallet .form-new-wallet {
+    width: 500px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.PageUnlockWallet .form-new-wallet .mui-textfield {
+    width: 100%;
+}
+
+.PageUnlockWallet .form-new-wallet button {
+    width: 200px;
+}
+
+.PageUnlockWallet .UnlockKeystoreFile .select-keystore-file {
+    text-align: center;
+}
+
+.PageUnlockWallet .UnlockKeystoreFile .select-keystore-file .file-selected {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.PageUnlockWallet .UnlockKeystoreFile .select-keystore-file .file-selected .icon-file {
+    width: 30px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.PageUnlockWallet .UnlockKeystoreFile .select-keystore-file .file-selected .icon-file path {
+    stroke: #36c755;
+    stroke-width: 3px;
+    stroke-opacity: 1;
+    fill: #36c755;
+}
+
+.PageUnlockWallet .UnlockKeystoreFile form {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.PageUnlockWallet .UnlockKeystoreFile form .mui-textfield {
+    margin-right: 12px;
+}
+
+.PageUnlockWallet .UnlockPrivateKey .button-wrapper {
+    text-align: center;
+}
+
+
+

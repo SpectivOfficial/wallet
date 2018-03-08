@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
+import classnames from 'classnames'
 const { dialog } = window.require('electron').remote
 const fs = window.require('fs')
+const path = window.require('path')
 import { ethers, Wallet, setMyWallet } from './eth'
 import logo from './images/logo.png'
 
@@ -33,10 +35,11 @@ class PageUnlockWallet extends Component
 
                         <Tabs>
                             <Tab label="Create new">
-                                <Form inline={true}>
-                                    <Input ref={x => this._inputPassword = x} placeholder="Wallet password" />
+                                <div className="form-new-wallet">
+                                    <Input type="password" label="Enter wallet password" ref={x => this._inputPassword = x} placeholder="Wallet password" />
+                                    <Input type="password" label="Confirm password"      ref={x => this._inputPassword = x} placeholder="Confirm password" />
                                     <Button onClick={this.onClickCreateNewWallet} color="primary">Create new wallet</Button>
-                                </Form>
+                                </div>
                             </Tab>
 
                             <Tab label="Keystore file">
@@ -107,22 +110,26 @@ class UnlockKeystoreFile extends Component
             <div className="UnlockKeystoreFile">
                 <div>
                     <div>
-                        {this.state.keyFile !== null && this.state.phase !== PHASE_DECRYPTING &&
-                            <div>
-                                <div>Keystore JSON File: {this.state.keyFile}</div>
-                                <Button onClick={this.onClickOpenKeystoreFile} color="primary">Use Other Keystore File</Button>
-                            </div>
-                        }
+                        <div className={classnames('select-keystore-file', {'hidden': this.state.phase === PHASE_DECRYPTING})}>
+                            {this.state.keyFile !== null &&
+                                <div className="file-selected">
+                                    <IconFile fill="#ffffff" />
+                                    {path.basename(this.state.keyFile)}
+                                </div>
+                            }
 
-                        {this.state.keyFile === null && this.state.phase !== PHASE_DECRYPTING &&
-                            <Button onClick={this.onClickOpenKeystoreFile} color="primary">Open Keystore File</Button>
-                        }
+                            {this.state.keyFile !== null &&
+                                <Button onClick={this.onClickOpenKeystoreFile} color="primary">Use Other Keystore File</Button>
+                            }
+
+                            {this.state.keyFile === null && <Button onClick={this.onClickOpenKeystoreFile} color="primary">Open Keystore File</Button> }
+                        </div>
                     </div>
 
                     {this.state.phase === PHASE_HAS_KEYFILE &&
                         <Form inline={true}>
                             <Input ref={x => this._inputPassword = x} type="password" className="form-control" placeholder="Wallet password" />
-                            <Button type="submit" className="btn btn-default" onClick={this.onClickUnlockKeystoreFile}>Open</Button>
+                            <Button color="primary" onClick={this.onClickUnlockKeystoreFile}>Open</Button>
                         </Form>
                     }
 
@@ -199,9 +206,10 @@ class UnlockPrivateKey extends Component
             <div className="UnlockPrivateKey">
                 <div>
                     <div className="form-group">
-                        <label>Private key</label>
-                        <Input ref={x => this._inputPrivateKey = x} className="form-control" placeholder="0xdeadbeef..." />
-                        <Button onClick={this.onClickUnlock}>Unlock</Button>
+                        <Input label="Private key" ref={x => this._inputPrivateKey = x} className="form-control" placeholder="0xdeadbeef..." />
+                        <div className="button-wrapper">
+                            <Button color="primary" onClick={this.onClickUnlock}>Unlock</Button>
+                        </div>
                     </div>
 
                     {this.state.error &&
@@ -238,3 +246,12 @@ class UnlockPrivateKey extends Component
 }
 
 export default PageUnlockWallet
+
+
+
+
+class IconFile extends Component {
+    render() {
+        return <svg className="icon-file" xmlns="http://www.w3.org/2000/svg" version="1.1" x="0px" y="0px" viewBox="0 0 100 125"><g transform="translate(0,-952.36218)"><path d="m 19.812482,958.36223 c -0.983171,0.0927 -1.816761,1.01248 -1.812501,2 l 0,83.99997 c 1.1e-4,1.0472 0.95283,1.9999 2.000001,2 l 59.999999,0 c 1.04717,-10e-5 1.9999,-0.9528 2,-2 l 0,-63.99997 c 0.004,-0.53245 -0.21513,-1.06311 -0.59375,-1.4375 l -20,-20 c -0.37215,-0.35999 -0.88849,-0.56653 -1.40625,-0.5625 l -40.187499,0 z m 2.1875,4 35.999999,0 0,18 a 2.0002002,2.0002002 0 0 0 2,2 l 18,0 0,59.99997 -55.999999,0 0,-79.99997 z m 39.999999,2.8125 13.1875,13.1875 -13.1875,0 0,-13.1875 z" fill={this.props.fill} fillOpacity="1" stroke="none" marker="none" visibility="visible" display="inline" overflow="visible"/></g></svg>
+    }
+}

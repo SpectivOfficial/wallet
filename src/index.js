@@ -17,5 +17,6 @@ window.store.on('new state', (appState) => {
 window.store.emitState()
 
 window.store.getTxList()
+window.store.checkForUpdates('v1.0.0')
 
 

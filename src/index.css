@@ -112,9 +112,35 @@ body .mui-select > select:focus ~ label {
     color: white;
 }
 
+body .mui-btn--primary {
+    background-color: #4ebd94;
+    color: white;
+}
+
+body .mui-btn--primary:hover {
+    background-color: #46daa3;
+    color: white;
+}
+
+
+body .mui-btn--secondary {
+    background-color: #275f4a;
+    color: white;
+}
+
+body .mui-btn--secondary:hover {
+    background-color: #28805f;
+    color: white;
+}
+
 
 .spacer {
     flex-grow: 1;
+}
+
+
+.hidden {
+    display: none;
 }
 
 

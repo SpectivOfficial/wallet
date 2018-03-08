@@ -25,6 +25,8 @@ class SectionSendTx extends Component
         this.onChangeGasPrice = this.onChangeGasPrice.bind(this)
         this.sendCoins = this.sendCoins.bind(this)
         this.clearFields = this.clearFields.bind(this)
+        this.getSelectedGasPrice = this.getSelectedGasPrice.bind(this)
+        this.onClickSendMax = this.onClickSendMax.bind(this)
 
         this.state = {
             currency: CURRENCY_ETH,
@@ -43,6 +45,7 @@ class SectionSendTx extends Component
 
                 <div className="row amount">
                     <Input className="input" ref={x => this._inputAmount = x} label="Amount" />
+                    <a className="send-max" onClick={this.onClickSendMax}>Send max</a>
 
                     <Select className="currency" label="Send currency" onChange={this.onChangeCurrency} value={this.state.currency}>
                         <Option value={CURRENCY_ETH} label="ETH" />
@@ -65,8 +68,8 @@ class SectionSendTx extends Component
                     </div>
 
                     <div>
-                        <Button className="button-send"  onClick={this.sendCoins}>Send {this.state.currency}</Button>
-                        <Button className="button-clear" onClick={this.clearFields}>Clear</Button>
+                        <Button color="primary"   onClick={this.sendCoins}>Send {this.state.currency}</Button>
+                        <Button color="secondary" onClick={this.clearFields}>Clear</Button>
                     </div>
                 </div>
 
@@ -83,6 +86,21 @@ class SectionSendTx extends Component
         this._inputAmount.controlEl.value = ''
         this._inputAddress.controlEl.value = ''
         this.setState({ gasPrice: 5 })
+    }
+
+    getSelectedGasPrice() {
+        return ethers.utils.bigNumberify(this._inputGasPrice.value).mul(1000000000)
+    }
+
+    onClickSendMax() {
+        let amount
+        if (this.state.currency === CURRENCY_ETH) {
+            let gasCost = ethers.utils.bigNumberify(21000).mul( this.getSelectedGasPrice() )
+            amount = this.props.appState.ethBalance.sub( gasCost )
+        } else if (this.state.currency === CURRENCY_SIG) {
+            amount = this.props.appState.sigBalance
+        }
+        this._inputAmount.controlEl.value = ethers.utils.formatEther(amount)
     }
 
     onChangeGasPrice() {
@@ -105,7 +123,7 @@ class SectionSendTx extends Component
             return
         }
 
-        const gasPrice = ethers.utils.bigNumberify(this._inputGasPrice.value).mul(1000000000)
+        const gasPrice = this.getSelectedGasPrice()
 
         let recipient
         try {

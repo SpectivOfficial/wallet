@@ -39,6 +39,7 @@ ul.tx-list li .summary {
 
 ul.tx-list li .summary .expander {
     margin-left: 15px;
+    cursor: pointer;
 }
 
 ul.tx-list li.expanded .full {

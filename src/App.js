@@ -8,6 +8,9 @@ import Button from 'muicss/lib/react/button'
 import './App.css'
 import 'muicss/dist/css/mui.css'
 
+const shell = window.require('electron').shell
+
+
 class App extends Component
 {
     render() {
@@ -32,6 +35,11 @@ class App extends Component
 
                 <ModalBadValue
                     visible={this.props.appState.modalDisplayed === 'bad-value'}
+                />
+
+                <ModalUpdateAvailable
+                    visible={this.props.appState.modalDisplayed === 'update-available'}
+                    {...this.props.appState.modalParams}
                 />
             </div>
         )
@@ -136,3 +144,36 @@ class ModalBadValue extends Component
 }
 
 
+class ModalUpdateAvailable extends Component
+{
+    constructor(props) {
+        super(props)
+        this.onClickOK = this.onClickOK.bind(this)
+        this.onClickGoToDownloadPage = this.onClickGoToDownloadPage.bind(this)
+    }
+
+    render() {
+        return (
+            <div className={classnames('modal', {'visible': this.props.visible})}>
+                <div>
+                    <div className="content">
+                        An updated version of the Spectiv SIG wallet is available.
+                    </div>
+
+                    <div className="actions">
+                        <Button color="primary"   onClick={this.onClickGoToDownloadPage}>Go to download page</Button>
+                        <Button color="secondary" onClick={this.onClickOK}>No thanks</Button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    onClickOK() {
+        window.store.hideModal()
+    }
+
+    onClickGoToDownloadPage() {
+        shell.openExternal('https://github.com/SpectivOfficial/wallet/releases')
+    }
+}

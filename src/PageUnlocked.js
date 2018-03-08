@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 const { dialog } = window.require('electron').remote
+const shell = window.require('electron').shell
 const fs = window.require('fs')
 import { ethers } from './eth'
 import classnames from 'classnames'
@@ -35,6 +36,7 @@ class PageUnlocked extends Component
         }
 
         this.openSection = this.openSection.bind(this)
+        this.onClickAddress = this.onClickAddress.bind(this)
     }
 
     componentWillMount() {
@@ -52,9 +54,35 @@ class PageUnlocked extends Component
         this._updateInterval = null
     }
 
+    formatNum(n) {
+        n = parseFloat(ethers.utils.formatEther( n ))
+
+        let floatDigits = 7
+        if (n <= 999) {
+            floatDigits = 7
+        } else if (n <= 9999) {
+            floatDigits = 6
+        } else if (n <= 99999) {
+            floatDigits = 5
+        } else if (n <= 999999) {
+            floatDigits = 4
+        } else if (n <= 9999999) {
+            floatDigits = 3
+        } else if (n <= 99999999) {
+            floatDigits = 2
+        } else {
+            floatDigits = 1
+        }
+
+        return n.toFixed(floatDigits)
+    }
+
     render() {
-        const { sigPrice24HChange } = this.props.appState
+        const { sigPrice24HChange, errorFetchingSIGPrice } = this.props.appState
         let priceChangeSymbol = sigPrice24HChange > 0 ? '+' : ''
+
+        let amountETH = this.formatNum( this.props.appState.ethBalance )
+        let amountSIG = this.formatNum( this.props.appState.sigBalance )
 
         return (
             <div className="PageUnlocked">
@@ -67,10 +95,10 @@ class PageUnlocked extends Component
                         <label>Balances</label>
 
                         <div className="currency-name">SIG</div>
-                        <div className="large">{ethers.utils.formatEther( this.props.appState.sigBalance )}</div>
+                        <div className="large">{amountSIG}</div>
 
                         <div className="currency-name">ETH</div>
-                        <div className="large">{ethers.utils.formatEther( this.props.appState.ethBalance )}</div>
+                        <div className="large">{amountETH}</div>
                     </section>
 
                     <section className="sig-price">
@@ -80,6 +108,8 @@ class PageUnlocked extends Component
                         <div className={classnames('change', {'positive': sigPrice24HChange > 0, 'negative': sigPrice24HChange < 0})}>
                             {`${priceChangeSymbol}${(this.props.appState.sigPrice24HChange * 100).toFixed(2)}%`}
                         </div>
+
+                        <div className={classnames('error', {'hidden': !errorFetchingSIGPrice})}>Error fetching SIG price</div>
                     </section>
 
                     <section className={classnames('menu-item', {'active': this.state.section === SECTION_SEND_TX})} onClick={() => this.openSection(SECTION_SEND_TX)}>
@@ -96,7 +126,7 @@ class PageUnlocked extends Component
                 <div className="content-area">
                     <div className="address">
                         <h1>Address</h1>
-                        <div>{this.props.appState.wallet.address}</div>
+                        <div onClick={this.onClickAddress}>{this.props.appState.wallet.address}</div>
                     </div>
 
                     {this.state.section === SECTION_SEND_TX &&
@@ -113,6 +143,10 @@ class PageUnlocked extends Component
 
     openSection(section) {
         this.setState({ section })
+    }
+
+    onClickAddress() {
+        shell.openExternal(`https://etherscan.io/address/${this.props.appState.wallet.address}`)
     }
 }
 

@@ -55,6 +55,10 @@
     color: #8a2d2d;
 }
 
+.PageUnlocked nav section.sig-price .error {
+    color: #8a2d2d;
+}
+
 .PageUnlocked nav section.menu-item {
     cursor: pointer;
 }
@@ -77,6 +81,9 @@
     left: 220px;
     padding: 10px 60px;
     width: calc(100% - 220px - 120px);
+    height: 100%;
+    background-image: url(images/background.png);
+    background-size: cover;
 }
 
 .PageUnlocked .content-area .address {

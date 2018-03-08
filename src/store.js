@@ -18,6 +18,7 @@ class Store extends EventEmitter
             txlist: {},
             sigPrice: 0.0,
             sigPrice24HChange: 0.0,
+            errorFetchingSIGPrice: false,
             modalDisplayed: null,
             modalParams: {},
         }
@@ -39,19 +40,7 @@ class Store extends EventEmitter
     setWalletUnlocked(wallet) {
         this.state.wallet = wallet
         this.state.wallet.provider = provider
-
         this.state.tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, wallet)
-
-        // this.state.txlist[wallet.address] = [
-        //     // { timestamp: 1520028166, amount: '12345', currency: 'ETH', txHash: '0xf4894957c3fd0bdd247e08ca35c84966db31144441e7c18848d8957c3b175efc', to: '0x8da766abadd67c838ba31882826f10a30787270a', status: 'pending' },
-        //     { timestamp: 1520028166, amount: '12345', currency: 'ETH', txHash: '0xbbe8401a5a04d7b19207ffc6a01284dedfd39a6d2543f7599f519530259bf7ed', to: '0x8da766abadd67c838ba31882826f10a30787270a', status: 'pending' },
-        //     { timestamp: 1520028192, amount: '2419', currency: 'ETH', txHash: '0xd2dece8393bcd25f206be857d24ddd228194ed246cac1411edc8bae74e90a525', to: '0xdeadbeef22laksjdfkjxxjdx', status: 'pending' },
-        //     { timestamp: 1520028192, amount: '2419', currency: 'ETH', txHash: '0x67496ccd007b561842275defc47708f53d8a6f9ce09a39f30c3670e8759e4758', to: '0xdeadbeef22laksjdfkjxxjdx', status: 'pending' },
-        //     { timestamp: 1520028192, amount: '2419', currency: 'ETH', txHash: '0x5d0c488e8e2c7927283d0826e7ec0fea0f840713baf38556f3e7f56a90b465b3', to: '0xdeadbeef22laksjdfkjxxjdx', status: 'pending' },
-        //     { timestamp: 1520028192, amount: '2419', currency: 'ETH', txHash: '0xfc3d6d0ecee29e59f796071dc3e0d5a7738012ffbaa68836ec63db28e04d41c8', to: '0xdeadbeef22laksjdfkjxxjdx', status: 'pending' },
-        //     { timestamp: 1520028192, amount: '2419', currency: 'ETH', txHash: '0xd46045771872fa78dd09f8aba674ab8c1082362d3784b374976efb0ead89aa8a', to: '0xdeadbeef22laksjdfkjxxjdx', status: 'pending' },
-        //     { timestamp: 1520028192, amount: '2419', currency: 'ETH', txHash: '0x76ca9ee96c3eef1f9aa798fee1c654d02c2d4ed4ffb0c3738a2a23f454ed859f', to: '0xdeadbeef22laksjdfkjxxjdx', status: 'pending' },
-        // ]
 
         this.emitState()
 
@@ -62,19 +51,19 @@ class Store extends EventEmitter
     }
 
     async updateETHBalance() {
-        this.state.ethBalance = await provider.getBalance( this.state.wallet.address )
+        this.state.ethBalance = ethers.utils.bigNumberify( await provider.getBalance( this.state.wallet.address ) )
         this.emitState()
     }
 
     async updateSIGBalance() {
-        this.state.sigBalance = (await this.state.tokenContract.functions.balanceOf( this.state.wallet.address ))[0]
+        this.state.sigBalance = ethers.utils.bigNumberify( (await this.state.tokenContract.functions.balanceOf( this.state.wallet.address ))[0] )
         this.emitState()
     }
 
     getTxList() {
         let dataPath = app.getPath('userData')
         let txlistPath = path.join(dataPath, 'txs.json')
-        console.log('~~>', txlistPath)
+        console.log('txlist path ~~>', txlistPath)
 
         try {
             this.state.txlist = JSON.parse(fs.readFileSync(txlistPath, 'utf8'))
@@ -139,7 +128,7 @@ class Store extends EventEmitter
 
                     if (txObj.data === '0x') {
                         tx.currency = 'ETH'
-                    } else if (txObj.data.substr(0, 10) === '0xa9059cbb') {
+                    } else if (txObj.data.substr(0, 10) === '0xa9059cbb') { // this is an ERC20 `.transfer(...)` call
                         tx.currency = 'SIG'
                     } else {
                         throw new Error(`unknown transaction type (tx.data = ${txObj.data})`)
@@ -162,20 +151,26 @@ class Store extends EventEmitter
     }
 
     async getSIGPrice() {
-        let sigResp = await (await fetch('https://api.hitbtc.com/api/2/public/ticker/SIGBTC')).json()
-        let btcResp = await (await fetch('https://api.hitbtc.com/api/2/public/ticker/BTCUSD')).json()
+        try {
+            let sigResp = await (await fetch('https://api.hitbtc.com/api/2/public/ticker/SIGBTC')).json()
+            let btcResp = await (await fetch('https://api.hitbtc.com/api/2/public/ticker/BTCUSD')).json()
 
-        let sigbtcClose = parseFloat(sigResp.last)
-        let btcusdClose = parseFloat(btcResp.last)
-        let sigPrice = sigbtcClose * btcusdClose
+            let sigbtcClose = parseFloat(sigResp.last)
+            let btcusdClose = parseFloat(btcResp.last)
+            let sigPrice = sigbtcClose * btcusdClose
 
-        let sigbtcOpen = parseFloat(sigResp.open)
-        let btcusdOpen = parseFloat(btcResp.open)
-        let sigPrice24HAgo = sigbtcOpen * btcusdOpen
+            let sigbtcOpen = parseFloat(sigResp.open)
+            let btcusdOpen = parseFloat(btcResp.open)
+            let sigPrice24HAgo = sigbtcOpen * btcusdOpen
 
-        this.state.sigPrice24HChange = (sigPrice - sigPrice24HAgo) / sigPrice24HAgo
+            this.state.sigPrice24HChange = (sigPrice - sigPrice24HAgo) / sigPrice24HAgo
 
-        this.state.sigPrice = sigPrice
+            this.state.sigPrice = sigPrice
+            this.state.errorFetchingSIGPrice = false
+
+        } catch (err) {
+            this.state.errorFetchingSIGPrice = true
+        }
 
         this.emitState()
     }
@@ -201,6 +196,24 @@ class Store extends EventEmitter
     hideModal() {
         this.state.modalDisplayed = null
         this.emitState()
+    }
+
+    async checkForUpdates(walletVersion) {
+        let resp = await fetch('https://api.github.com/SpectivOfficial/wallet/releases/latest')
+
+        if (resp.status === 404) {
+            return
+        }
+
+        let data = await resp.json()
+
+        if (data.tag_name !== walletVersion) {
+            this.state.modalDisplayed = 'update-available'
+            this.state.modalParams = {
+                onClickOK: () => this.hideModal()
+            }
+            this.emitState()
+        }
     }
 }
 

@@ -3,13 +3,32 @@
     justify-content: space-between;
 }
 
-.SectionSendTx .amount .input {
+.SectionSendTx .row.amount {
+    position: relative; /* this is so that we can "position: absolute" the 'send max' button */
+}
+
+.SectionSendTx .row.amount .input {
     flex-grow: 1;
 }
 
-.SectionSendTx .amount .currency {
+.SectionSendTx .row.amount .currency {
     width: 220px;
     margin-left: 30px;
+}
+
+.SectionSendTx .row.amount .send-max {
+    position: absolute;
+    top: -4px;
+    right: 250px;
+    font-weight: bold;
+    color: #4ebd94;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.SectionSendTx .row.amount .send-max:hover {
+    text-decoration: none;
+    color: #46daa3;
 }
 
 .SectionSendTx .gas-price .gwei {
@@ -34,26 +53,3 @@
 .SectionSendTx .subheading {
     margin-bottom: 20px;
 }
-
-.SectionSendTx .button-send {
-    background-color: #4ebd94;
-    color: white;
-}
-
-.SectionSendTx .button-send:hover {
-    background-color: #46daa3;
-    color: white;
-}
-
-.SectionSendTx button.button-clear {
-    background-color: #275f4a;
-    color: white;
-}
-
-.SectionSendTx button.button-clear:hover {
-    background-color: #28805f;
-    color: white;
-}
-
-
-
