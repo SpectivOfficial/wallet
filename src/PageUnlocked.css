@@ -1,4 +1,13 @@
 
+@-webkit-keyframes rotate {
+    from {-webkit-transform: rotate(0deg);}
+    to {-webkit-transform: rotate(360deg);}
+}
+
+@keyframes rotate {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+}
 
 .PageUnlocked nav {
     position: fixed;
@@ -43,6 +52,33 @@
     display: block;
 }
 
+.PageUnlocked nav section.sig-price header {
+    display: flex;
+}
+
+.PageUnlocked nav section.sig-price header label {
+    flex-grow: 1;
+}
+
+.PageUnlocked nav section.sig-price header svg.icon-refresh {
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    fill: white;
+}
+
+.PageUnlocked nav section.sig-price header svg.icon-refresh.spinning {
+    -webkit-animation-name: rotate;
+    -webkit-animation-duration: 1.3s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    animation-name: rotate;
+    animation-duration: 1.3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+
 .PageUnlocked nav section.sig-price .change {
     font-weight: bold;
 }
@@ -74,6 +110,21 @@
     top: 4px;
 }
 
+.PageUnlocked nav section.spacer {
+    background-color: transparent;
+}
+
+.PageUnlocked nav section.bottom-link {
+    background-color: transparent;
+    text-align: center;
+}
+
+.PageUnlocked nav section.bottom-link a {
+    color: white;
+    font-size: 1.7rem;
+    cursor: pointer;
+}
+
 
 
 .PageUnlocked .content-area {
@@ -86,17 +137,60 @@
     background-size: cover;
 }
 
-.PageUnlocked .content-area .address {
+.PageUnlocked .content-area .address-section {
+    /*display: flex;*/
+}
+
+.PageUnlocked .content-area .address-section a {
+    cursor: pointer;
+}
+
+/*.PageUnlocked .content-area .left {
+    padding-top: 48px;
+}
+
+.PageUnlocked .content-area .left button {
+    margin-bottom: 0;
+}
+*/
+.PageUnlocked .content-area .address-section {
     text-align: right;
     width: 100%;
     color: #4ebd94;
 }
 
-.PageUnlocked .content-area .address h1 {
+.PageUnlocked .content-area .address-section h1 {
     color: white;
 }
 
+.PageUnlocked .content-area .address-section .address-and-copy {
+    display: flex;
+    flex-direction: row-reverse;
+}
 
+.PageUnlocked .content-area .address-section .address-and-copy svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    margin-top: -4px;
+    margin-bottom: -6px;
+    cursor: pointer;
+}
 
+.PageUnlocked .content-area .address-section .address-and-copy .copied-message {
+    transition: opacity 0.5s;
+    opacity: 0;
+    margin-right: 10px;
+    color: white;
+}
+
+.PageUnlocked .content-area .address-section .address-and-copy .copied-message.visible {
+    opacity: 1;
+}
+
+.PageUnlocked .content-area .SectionSendTx,
+.PageUnlocked .content-area .SectionTxHistory {
+    margin-top: -16px;
+}
 
 

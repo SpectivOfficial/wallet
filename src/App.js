@@ -41,6 +41,21 @@ class App extends Component
                     visible={this.props.appState.modalDisplayed === 'update-available'}
                     {...this.props.appState.modalParams}
                 />
+
+                <ModalUpdateAvailable
+                    visible={this.props.appState.modalDisplayed === 'update-available'}
+                    {...this.props.appState.modalParams}
+                />
+
+                <ModalInsufficientTokens
+                    visible={this.props.appState.modalDisplayed === 'insufficient-tokens'}
+                    {...this.props.appState.modalParams}
+                />
+
+                <ModalCreatedNewWallet
+                    visible={this.props.appState.modalDisplayed === 'created-new-wallet'}
+                    {...this.props.appState.modalParams}
+                />
             </div>
         )
     }
@@ -63,7 +78,7 @@ class ModalSendConfirmation extends Component
             <div className={classnames('modal', {'visible': this.props.visible})}>
                 <div>
                     <div className="content">
-                        Are you sure you want to send {this.props.amount} {this.props.currency} to {this.props.recipient}?
+                        Are you sure you want to send {this.props.amount} {this.props.token} to {this.props.recipient}?
                     </div>
 
                     <div className="actions">
@@ -157,7 +172,7 @@ class ModalUpdateAvailable extends Component
             <div className={classnames('modal', {'visible': this.props.visible})}>
                 <div>
                     <div className="content">
-                        An updated version of the Spectiv SIG wallet is available.
+                        You have insufficient {this.props.token} for that transaction.
                     </div>
 
                     <div className="actions">
@@ -175,5 +190,64 @@ class ModalUpdateAvailable extends Component
 
     onClickGoToDownloadPage() {
         shell.openExternal('https://github.com/SpectivOfficial/wallet/releases')
+    }
+}
+
+
+class ModalInsufficientTokens extends Component
+{
+    constructor(props) {
+        super(props)
+        this.onClickOK = this.onClickOK.bind(this)
+    }
+
+    render() {
+        return (
+            <div className={classnames('modal', {'visible': this.props.visible})}>
+                <div>
+                    <div className="content">
+                        You have insufficient {this.props.token} for that transaction.
+                    </div>
+
+                    <div className="actions">
+                        <Button color="secondary" onClick={this.onClickOK}>OK</Button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    onClickOK() {
+        window.store.hideModal()
+    }
+}
+
+
+class ModalCreatedNewWallet extends Component
+{
+    constructor(props) {
+        super(props)
+        this.onClickOK = this.onClickOK.bind(this)
+    }
+
+    render() {
+        return (
+            <div className={classnames('modal', {'visible': this.props.visible})}>
+                <div>
+                    <div className="content">
+                        You have just created a new SIG wallet. The keystore (JSON) file for this wallet has been placed on your desktop. Make sure to store this keystore file offline on an external hard drive for safekeeping. This keystore file can also be used to access your wallet via MyEtherWallet.
+                    </div>
+
+                    <div className="actions">
+                        <Button color="secondary" onClick={this.onClickOK}>OK</Button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    onClickOK() {
+        this.props.onClickOK()
+        window.store.hideModal()
     }
 }

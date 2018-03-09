@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import classnames from 'classnames'
-const { dialog } = window.require('electron').remote
+const { dialog, app } = window.require('electron').remote
 const fs = window.require('fs')
 const path = window.require('path')
 import { ethers, Wallet, setMyWallet } from './eth'
@@ -22,6 +22,10 @@ class PageUnlockWallet extends Component
     constructor(props) {
         super(props)
         this.onClickCreateNewWallet = this.onClickCreateNewWallet.bind(this)
+
+        this.state = {
+            errorPasswordsDoNotMatch: false,
+        }
     }
 
     render() {
@@ -37,12 +41,13 @@ class PageUnlockWallet extends Component
                             <Tab label="Create new">
                                 <div className="form-new-wallet">
                                     <Input type="password" label="Enter wallet password" ref={x => this._inputPassword = x} placeholder="Wallet password" />
-                                    <Input type="password" label="Confirm password"      ref={x => this._inputPassword = x} placeholder="Confirm password" />
+                                    <Input type="password" label="Confirm password"      ref={x => this._inputConfirmPassword = x} placeholder="Confirm password" />
                                     <Button onClick={this.onClickCreateNewWallet} color="primary">Create new wallet</Button>
+                                    {this.state.errorPasswordsDoNotMatch && <div className="error">Passwords do not match.</div>}
                                 </div>
                             </Tab>
 
-                            <Tab label="Keystore file">
+                            <Tab label="Keystore (JSON) file">
                                 <UnlockKeystoreFile />
                             </Tab>
 
@@ -60,12 +65,20 @@ class PageUnlockWallet extends Component
         evt.preventDefault()
         evt.stopPropagation()
 
+        if (this._inputPassword.controlEl.value !== this._inputConfirmPassword.controlEl.value) {
+            this.setState({ errorPasswordsDoNotMatch: true })
+            return
+        }
+
+        this.setState({ errorPasswordsDoNotMatch: false })
+
         let wallet = Wallet.createRandom()
         let json = await wallet.encrypt(this._inputPassword.controlEl.value)
 
         let filename
         try {
-            filename = dialog.showSaveDialog({ defaultPath: `sig-wallet--${wallet.address}.json` })
+            let desktop = app.getPath('desktop')
+            filename = dialog.showSaveDialog({ defaultPath: path.join(desktop, `sig-wallet--${wallet.address}.json`) })
         } catch (err) {
             // generally this is because the user canceled the save dialog
             console.log('err ~>', err)
@@ -81,7 +94,9 @@ class PageUnlockWallet extends Component
             // @@TODO: modal with error
         }
 
-        window.store.setWalletUnlocked(wallet)
+        window.store.showCreatedNewWalletModal(() => {
+            window.store.setWalletUnlocked(wallet)
+        })
     }
 }
 

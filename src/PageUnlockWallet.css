@@ -50,6 +50,12 @@
     width: 200px;
 }
 
+.PageUnlockWallet .form-new-wallet .error {
+    color: #8a2d2d;
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+
 .PageUnlockWallet .UnlockKeystoreFile .select-keystore-file {
     text-align: center;
 }

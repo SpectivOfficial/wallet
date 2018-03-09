@@ -13,15 +13,15 @@ import Option from 'muicss/lib/react/option'
 
 import './SectionSendTx.css'
 
-const CURRENCY_ETH = 'ETH'
-const CURRENCY_SIG = 'SIG'
+const TOKEN_ETH = 'ETH'
+const TOKEN_SIG = 'SIG'
 
 class SectionSendTx extends Component
 {
     constructor(props) {
         super(props)
 
-        this.onChangeCurrency = this.onChangeCurrency.bind(this)
+        this.onChangeToken = this.onChangeToken.bind(this)
         this.onChangeGasPrice = this.onChangeGasPrice.bind(this)
         this.sendCoins = this.sendCoins.bind(this)
         this.clearFields = this.clearFields.bind(this)
@@ -29,8 +29,8 @@ class SectionSendTx extends Component
         this.onClickSendMax = this.onClickSendMax.bind(this)
 
         this.state = {
-            currency: CURRENCY_ETH,
-            gasPrice: 5,
+            token: TOKEN_ETH,
+            gasPrice: 50,
             expandedTx: null,
         }
     }
@@ -47,9 +47,9 @@ class SectionSendTx extends Component
                     <Input className="input" ref={x => this._inputAmount = x} label="Amount" />
                     <a className="send-max" onClick={this.onClickSendMax}>Send max</a>
 
-                    <Select className="currency" label="Send currency" onChange={this.onChangeCurrency} value={this.state.currency}>
-                        <Option value={CURRENCY_ETH} label="ETH" />
-                        <Option value={CURRENCY_SIG} label="SIG" />
+                    <Select className="token" label="Send token" onChange={this.onChangeToken} value={this.state.token}>
+                        <Option value={TOKEN_ETH} label="ETH" />
+                        <Option value={TOKEN_SIG} label="SIG" />
                     </Select>
                 </div>
 
@@ -68,7 +68,7 @@ class SectionSendTx extends Component
                     </div>
 
                     <div>
-                        <Button color="primary"   onClick={this.sendCoins}>Send {this.state.currency}</Button>
+                        <Button color="primary"   onClick={this.sendCoins}>Send {this.state.token}</Button>
                         <Button color="secondary" onClick={this.clearFields}>Clear</Button>
                     </div>
                 </div>
@@ -94,10 +94,10 @@ class SectionSendTx extends Component
 
     onClickSendMax() {
         let amount
-        if (this.state.currency === CURRENCY_ETH) {
+        if (this.state.token === TOKEN_ETH) {
             let gasCost = ethers.utils.bigNumberify(21000).mul( this.getSelectedGasPrice() )
             amount = this.props.appState.ethBalance.sub( gasCost )
-        } else if (this.state.currency === CURRENCY_SIG) {
+        } else if (this.state.token === TOKEN_SIG) {
             amount = this.props.appState.sigBalance
         }
         this._inputAmount.controlEl.value = ethers.utils.formatEther(amount)
@@ -107,14 +107,15 @@ class SectionSendTx extends Component
         this.setState({ gasPrice: this._inputGasPrice.value })
     }
 
-    onChangeCurrency(evt) {
-        this.setState({ currency: evt.target.value })
+    onChangeToken(evt) {
+        this.setState({ token: evt.target.value })
     }
 
     async sendCoins() {
         const amount = this._inputAmount.controlEl.value
-        const currency = this.state.currency
+        const token = this.state.token
 
+        // validate the amount to send
         let amountWei
         try {
             amountWei = ethers.utils.parseEther(amount)
@@ -123,8 +124,10 @@ class SectionSendTx extends Component
             return
         }
 
+        // get the gas price
         const gasPrice = this.getSelectedGasPrice()
 
+        // validate the recipient address
         let recipient
         try {
             recipient = ethers.utils.getAddress(this._inputAddress.controlEl.value)
@@ -133,28 +136,49 @@ class SectionSendTx extends Component
             return
         }
 
+        // make sure the user has enough tokens for the tx they're attempting
+        if (this.state.token === TOKEN_ETH) {
+            if (gasPrice.mul(21000).add(amountWei).gt(this.props.appState.ethBalance)) {
+                window.store.showInsufficientTokensModal('ETH')
+                return
+            }
 
-        window.store.showSendConfirmationModal(amount, currency, recipient, async () => {
+        } else if (this.state.token === TOKEN_SIG) {
+            if (amountWei.gt( this.props.appState.sigBalance )) {
+                window.store.showInsufficientTokensModal('SIGs')
+                return
+            }
+
+            if (gasPrice.mul(65000).gt(this.props.appState.ethBalance)) {
+                window.store.showInsufficientTokensModal('ETH (for gas)')
+                return
+            }
+
+        } else {
+            throw new Error(`unknown token: ${this.state.token}`)
+        }
+
+        window.store.showSendConfirmationModal(amount, token, recipient, async () => {
             this.clearFields()
 
             let resp
-            if (this.state.currency === CURRENCY_ETH) {
+            if (this.state.token === TOKEN_ETH) {
                 resp = await this.props.appState.wallet.send(recipient, amountWei, {
                     gasPrice: gasPrice,
                     gasLimit: 21000,
                 })
 
-            } else if (this.state.currency === CURRENCY_SIG) {
+            } else if (this.state.token === TOKEN_SIG) {
                 resp = await this.props.appState.tokenContract.transfer(recipient, amountWei, {
                     gasPrice: gasPrice,
                     gasLimit: 65000,
                 })
 
             } else {
-                throw new Error(`unknown currency: ${this.state.currency}`)
+                throw new Error(`unknown token: ${this.state.token}`)
             }
 
-            window.store.addTxToList(resp.hash, amount, currency, recipient)
+            window.store.addTxToList(resp.hash, amount, token, recipient)
 
             console.log('resp ~>', resp)
         })

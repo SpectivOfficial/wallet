@@ -47,7 +47,7 @@ class TxList extends Component
                                     {tx.status === TX_STATUS_FAILED  && <span className="failed">(failed)</span>}
                                     {tx.status === TX_STATUS_PENDING && <span className="pending">(pending)</span>}
                                 </div>
-                                <div className="amount">{tx.amount} {tx.currency}</div>
+                                <div className="amount">{tx.amount} {tx.token}</div>
                                 <div className="expander">
                                     {this.state.expandedTx === i && <Minus />}
                                     {this.state.expandedTx !== i && <Plus />}

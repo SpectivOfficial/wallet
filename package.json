@@ -2,18 +2,20 @@
   "name": "sig-wallet",
   "version": "1.0.0",
   "private": true,
-  "author": "Spectiv",
-  "description": "SIG wallet",
+  "author": "Spectiv <support@spectivvr.com>",
+  "description": "Spectiv SIG Wallet",
   "homepage": ".",
   "devDependencies": {
     "electron": "^1.7.9",
-    "electron-builder": "^13.6.0",
+    "electron-builder": "^20.4.0",
     "foreman": "^2.0.0",
     "react-scripts": "0.9.0"
   },
   "dependencies": {
     "asar": "^0.14.2",
     "classnames": "^2.2.5",
+    "electron-builder-lib": "^20.4.0",
+    "electron-builder-squirrel-windows": "^20.4.0",
     "ethers": "^2.2.6",
     "lodash": "^4.17.5",
     "moment": "^2.21.0",
@@ -21,7 +23,7 @@
     "react": "^16.1.1",
     "react-dom": "^16.1.1"
   },
-  "main": "src/electron-starter.js",
+  "main": "public/electron.js",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -29,23 +31,21 @@
     "eject": "react-scripts eject",
     "electron": "electron .",
     "dev": "nf start -p 3000",
-    "pack": "build --dir",
-    "dist": "npm run build && build",
-    "postinstall": "install-app-deps"
+    "postinstall": "install-app-deps",
+
+    "electron-pack": "build -mw --c.extraMetadata.main=build/electron.js --c.extraMetadata.name='Spectiv SIG Wallet'",
+    "xpreelectron-pack": "yarn build"
   },
   "build": {
-    "asar": true,
-    "directories": {
-      "buildResources": "resources",
-      "output": "dist"
-    },
     "appId": "com.spectiv.sigwallet",
     "productName": "SIG Wallet",
+    "asar": true,
+    "directories": {
+      "buildResources": "assets",
+      "output": "dist"
+    },
     "files": [
-      "src/electron-starter.js",
-      "node_modules",
-      "package.json",
-      "build",
+      "node_modules/**/*",
       "build/**/*"
     ],
     "mac": {
@@ -56,6 +56,8 @@
         "deb"
       ]
     },
-    "win": {}
+    "win": {
+      "target": "nsis"
+    }
   }
 }

@@ -13,8 +13,8 @@ class Store extends EventEmitter
         this.state = {
             wallet: null,
             tokenContract: new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, provider),
-            sigBalance: 0,
-            ethBalance: 0,
+            sigBalance: ethers.utils.bigNumberify(0),
+            ethBalance: ethers.utils.bigNumberify(0),
             txlist: {},
             sigPrice: 0.0,
             sigPrice24HChange: 0.0,
@@ -37,6 +37,8 @@ class Store extends EventEmitter
     // actions
     //
 
+    _intervalPendingTxs = null
+
     setWalletUnlocked(wallet) {
         this.state.wallet = wallet
         this.state.wallet.provider = provider
@@ -44,10 +46,19 @@ class Store extends EventEmitter
 
         this.emitState()
 
-        setInterval(() => {
+        this._intervalPendingTxs = setInterval(() => {
             this.checkPendingTxs()
         }, 5000)
+    }
 
+    changeWallet() {
+        this.state.wallet = null
+        this.state.tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, provider)
+
+        clearInterval(this._intervalPendingTxs)
+        this._intervalPendingTxs = null
+
+        this.emitState()
     }
 
     async updateETHBalance() {
@@ -74,11 +85,11 @@ class Store extends EventEmitter
         this.emitState()
     }
 
-    addTxToList(txHash, amount, currency, to) {
+    addTxToList(txHash, amount, token, to) {
         this.state.txlist[ this.state.wallet.address ] = (this.state.txlist[ this.state.wallet.address ] || []).concat({
             txHash,
             amount: `${amount}`,
-            currency,
+            token,
             to,
             timestamp: Math.floor(new Date().getTime() / 1000),
             status: 'pending',
@@ -127,14 +138,14 @@ class Store extends EventEmitter
                     tx.to = txObj.to
 
                     if (txObj.data === '0x') {
-                        tx.currency = 'ETH'
+                        tx.token = 'ETH'
                     } else if (txObj.data.substr(0, 10) === '0xa9059cbb') { // this is an ERC20 `.transfer(...)` call
-                        tx.currency = 'SIG'
+                        tx.token = 'SIG'
                     } else {
                         throw new Error(`unknown transaction type (tx.data = ${txObj.data})`)
                     }
 
-                    if (tx.currency === 'ETH') {
+                    if (tx.token === 'ETH') {
                         tx.amount = ethers.utils.formatEther(txObj.value)
                     } else {
                         let n = ethers.utils.bigNumberify('0x' + txObj.data.substr(74, 64))
@@ -175,9 +186,9 @@ class Store extends EventEmitter
         this.emitState()
     }
 
-    showSendConfirmationModal(amount, currency, recipient, onClickOK) {
+    showSendConfirmationModal(amount, token, recipient, onClickOK) {
         this.state.modalDisplayed = 'send-confirmation'
-        this.state.modalParams = { amount, currency, recipient, onClickOK }
+        this.state.modalParams = { amount, token, recipient, onClickOK }
         this.emitState()
     }
 
@@ -193,8 +204,21 @@ class Store extends EventEmitter
         this.emitState()
     }
 
+    showInsufficientTokensModal(token) {
+        this.state.modalDisplayed = 'insufficient-tokens'
+        this.state.modalParams = { token }
+        this.emitState()
+    }
+
+    showCreatedNewWalletModal(onClickOK) {
+        this.state.modalDisplayed = 'created-new-wallet'
+        this.state.modalParams = { onClickOK }
+        this.emitState()
+    }
+
     hideModal() {
         this.state.modalDisplayed = null
+        this.state.modalParams = {}
         this.emitState()
     }
 
