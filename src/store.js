@@ -223,7 +223,7 @@ class Store extends EventEmitter
     }
 
     async checkForUpdates(walletVersion) {
-        let resp = await fetch('https://api.github.com/SpectivOfficial/wallet/releases/latest')
+        let resp = await fetch('https://api.github.com/repos/SpectivOfficial/wallet/releases/latest')
 
         if (resp.status === 404) {
             return
